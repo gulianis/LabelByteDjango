@@ -89,9 +89,9 @@ WSGI_APPLICATION = 'FabelWebsite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'fabel',
-        'USER': 'sgulsach',
-        'PASSWORD': 'roundline',
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '',
     }
