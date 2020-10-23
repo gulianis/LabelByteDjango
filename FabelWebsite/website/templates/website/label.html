@@ -1,0 +1,86 @@
+{% extends "website/base.html" %}
+{% block content %}
+    <h4>Upload zip file:</h4>
+
+    <div class="b">
+        <p>{{ error }}</p>
+    </div>
+
+    <div class="b">
+        <form action="#" method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form }}
+            <input type="submit" name="Upload" value="Upload" />
+        </form>
+    </div>
+    <table class="center">
+        <tr>
+            <th>id</th>
+            <th>zip file</th>
+        </tr>
+        {% for img in images %}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{img}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="b">
+        <p> *Zip up images you would like to upload. You can Zip up images contained in a folder.<br>
+            *File will be deleted 3 days after uploaded and all associated labeling<br>
+            *After completing labeling, press download to get .txt file<br>
+           </p>
+    </div>
+    <div class="b">
+        <form action="{% url 'download' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name='Download' value=Download>Download</button>
+        </form>
+    </div>
+    <hr>
+    <h4>Data Info:</h4>
+    <table class="center">
+        <tr>
+            <th>Upload Limit</th>
+            <th>Unzipped Limit</th>
+            <th>Monthly Unzipped Limit</th>
+            <th>Accepted Files</th>
+        </tr>
+        <tr>
+            <td>20 mb</td>
+            <td>20 mb</td>
+            <td>75 mb</td>
+            <td>jpg jpeg png</td>
+        </tr>
+    </table>
+    <h4>Label Info:</h4>
+    <table class="center">
+        <tr>
+            <th>Label Type</th>
+            <th>X Coordinate</th>
+            <th>Y Coordinate</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Classification</th>
+        </tr>
+        <tr>
+            <td>Bounding Box</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>Point</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>
+    </table>
+    <div class="b">
+        <p>*Bounding Box is given from top left corner</p>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,93 @@
+h1 {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 1px;
+}
+
+h4 {
+
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 1px;
+}
+
+
+.inputWrapper label {
+    display: block;
+
+}
+
+.a {
+
+    text-align: center;
+    margin-top: 35px;
+    margin-bottom: 1px;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.b {
+
+    text-align: center;
+    margin-top: 35px;
+    margin-bottom: 1px;
+
+}
+
+.c {
+
+    text-align: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
+
+}
+
+
+.e {
+    margin-bottom: 20px;
+}
+
+.f {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+
+.content-section {
+
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-top: 35px;
+  margin-bottom: 20px;
+  margin-right: 490px;
+  margin-left: 490px;
+
+}
+
+.total-section {
+
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+
+.change-password-container {
+    width:250px;
+    height:270px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top: 20px;
+    border: 1px lightgray solid;
+}
+
+.change-password {
+    display: flex;
+    justify-content: center;
+}
+
+
+.jumbotron {
+    background-color: #90EE90;
+}

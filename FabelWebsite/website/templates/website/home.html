@@ -1,0 +1,34 @@
+{% extends "website/base.html" %}
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Fabel!</h1>
+        <p class="lead" style="text-align:center;">Fabel provides on the go data labeling for your machine learning projects.</p>
+        <hr class="my-4">
+        <p style="text-align:center;">Will soon be available for iphone.</p><br><br>
+    </div>
+    <div class="b">
+        <h3>What Fabel does:</h3><br>
+        <p>Fabel allows you to label image data on your phone. It will soon be available for iphone.
+            Once <br> you create an account, you can upload data to the cloud. Download the app and login on your phone with <br> the same account. You can access these photos and
+            label them with bounding boxes or points. The coordinate data of these <br>labels in addition to a classification label for bounding boxes is downloadable as a txt file.
+            </p>
+    </div><br>
+    <div class="b">
+        <h3>What an account has access to:</h3>
+    </div>
+    <table class="center">
+        <tr>
+            <th>monthly upload limit</th>
+            <th>file upload limit</th>
+            <th>requests per uploaded image</th>
+            <th>access time for uploaded file</th>
+        </tr>
+        <tr>
+            <td>75 mb</td>
+            <td>20 mb</td>
+            <td>10</td>
+            <td>3 days</td>
+        </tr>
+    </table><br>
+
+{% endblock content %}
