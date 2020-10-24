@@ -3,8 +3,11 @@ import os
 from celery import Celery
 from django.conf import settings
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'FabelWebsite.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.getenv('SETTING_TYPE'))
 app = Celery('FabelWebsite')
 
 # Using a string here means the worker will not have to

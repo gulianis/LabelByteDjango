@@ -5,7 +5,7 @@ from django.urls import path
 from rest_framework.authtoken import views as viewsToken
 
 urlpatterns = [
-    path('send_image/', views.send_image, name='send_image'),
+    path('save_labels/', views.save_labels, name='save_labels'),
     path('download/', views.download, name='download'),
     path('download-count/', views.download_count, name='download-count'),
     path('zipFileName/', views.zipFileName, name="zipFileName"),

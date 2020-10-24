@@ -13,7 +13,7 @@ from boto3.s3.transfer import S3Transfer
 
 
 @api_view(['POST'])
-def send_image(request):
+def save_labels(request):
     # saves labels for requested Zip File Name and Image Name from requested user
     # if Bounding Box count is 2 and Point Data count is 1 this is an example of request.data:
     # request.data - {'ZipFile': 'File_1', 'ImageName': 'Image_1','BoundingBox_count': '2', 'Point_count': '1',
@@ -67,21 +67,24 @@ def download_count(request):
 @api_view(['POST'])
 def download(request):
     user_id_full_string = f'user_{str(request.user.id)}'
-    transfer = S3Transfer(boto3.client('s3', 'us-west-2',
-                                       aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                                       aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY))
-    bucket = settings.AWS_STORAGE_BUCKET_NAME
-    temp_directory = os.path.join('media', *[user_id_full_string, 'transfer'])
-    if os.path.exists(temp_directory):
-        for root, dirs, files in os.walk(temp_directory):
-            for name in files:
-                local_path = os.path.join(root, name)
-                os.remove(local_path)
+    if settings.USE_S3 == True:
+        transfer = S3Transfer(boto3.client('s3', 'us-west-2',
+                                           aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                           aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY))
+        bucket = settings.AWS_STORAGE_BUCKET_NAME
+        temp_directory = os.path.join('media', *[user_id_full_string, 'transfer'])
+        if os.path.exists(temp_directory):
+            for root, dirs, files in os.walk(temp_directory):
+                for name in files:
+                    local_path = os.path.join(root, name)
+                    os.remove(local_path)
+        else:
+            os.mkdir(temp_directory)
+        temp_store = os.path.join('media', *[user_id_full_string, 'transfer', request.data['ImageName']])
+        s3_path = os.path.join('media', *[user_id_full_string, request.data['ImageName']])
+        transfer.download_file(bucket, s3_path, temp_store)
     else:
-        os.mkdir(temp_directory)
-    temp_store = os.path.join('media', *[user_id_full_string, 'transfer', request.data['ImageName']])
-    s3_path = os.path.join('media', *[user_id_full_string, request.data['ImageName']])
-    transfer.download_file(bucket, s3_path, temp_store)
+        temp_store = os.path.join(settings.MEDIA_ROOT, *[user_id_full_string, 'image', request.data['ImageName']])
     # downloads an image for requested Image Name and Zip File Name from requested user
     #file_path = os.path.join(settings.MEDIA_ROOT, *[user_id_full_string,'image',request.data['ImageName']])
     requested_image_data = UserImageUpload.objects.filter(imageName=request.data['ImageName']).filter(

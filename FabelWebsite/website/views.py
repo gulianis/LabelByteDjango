@@ -25,11 +25,12 @@ def delete_data(self, user_id, zipName, img_list):
         Upload.objects.filter(user_id = user_id).filter(zipName=zipName).first().delete()
     except:
         print("It did not work")
-    while len(img_list) > 0:
-        img_name = img_list.pop()
-        #CurrentUser.total_data_usage -= os.path.getsize(img_name)
-        #CurrentUser.save()
-        os.remove(img_name)
+    if settings.USE_S3 == False:
+        while len(img_list) > 0:
+            img_name = img_list.pop()
+            #CurrentUser.total_data_usage -= os.path.getsize(img_name)
+            #CurrentUser.save()
+            os.remove(img_name)
     return "Deleted From Memory"
 
 
@@ -133,8 +134,9 @@ def label(request):
                     if total_img_memory > 0:
                         CurrentUser.total_data_usage += total_img_memory
                         CurrentUser.save()
-                    #at_time = datetime.utcnow() + timedelta(seconds=120)
-                    #delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
+                    if settings.DELETION == True:
+                        at_time = datetime.utcnow() + timedelta(seconds=120)
+                        delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
                 os.remove(zip_file_path)
                 if settings.USE_S3 == True:
                     transfer = S3Transfer(boto3.client('s3', 'us-west-2',

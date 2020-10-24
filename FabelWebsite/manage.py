@@ -3,9 +3,15 @@
 import os
 import sys
 
+from dotenv import load_dotenv
+load_dotenv()
+
+from pathlib import Path  # Python 3.6+ only
+env_path = Path.cwd() / 'FabelWebsite' / '.env'
+load_dotenv(dotenv_path=env_path)
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'FabelWebsite.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.getenv('SETTING_TYPE'))
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
