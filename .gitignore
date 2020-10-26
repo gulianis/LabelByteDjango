@@ -130,7 +130,7 @@ dmypy.json
 .pyre/
 
 # development files created
-.0001_initial.py
+0001_initial.py
 /media
 <<<<<<< HEAD
 
