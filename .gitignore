@@ -132,3 +132,10 @@ dmypy.json
 # development files created
 0001_initial.py
 /media
+<<<<<<< HEAD
+
+# Server network stuff
+FabelWebsite.sock
+/supervisor
+=======
+>>>>>>> 18ec4601f80693112ea841ea9a2a57bbc6f8e879
