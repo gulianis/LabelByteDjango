@@ -20,11 +20,7 @@ from boto3.s3.transfer import S3Transfer
 @task(bind=True, name="delete_data")
 def delete_data(self, user_id, zipName, img_list):
     # Deletes zip just uploaded after some specified time
-    CurrentUser = CustomUser.objects.get(id=user_id)
-    try:
-        Upload.objects.filter(user_id = user_id).filter(zipName=zipName).first().delete()
-    except:
-        print("It did not work")
+    """
     if settings.USE_S3 == False:
         while len(img_list) > 0:
             img_name = img_list.pop()
@@ -43,7 +39,21 @@ def delete_data(self, user_id, zipName, img_list):
             client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=some_path)
             last = some_path
         return last
-
+    """
+    for items in UserImageUpload.objects.all().filter(zipUpload__user_id=user_id).filter(zipUpload__zipName=zipName):
+        if settings.USE_S3 == False:
+            os.remove(items.imageName)
+        else:
+            user_id_full_string = f'user_{str(user_id)}'
+            client = boto3.client('s3', 'us-west-1',
+                                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+            some_path = os.path.join('media', *[user_id_full_string, zipName, items.imageName])
+            client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=some_path)
+    try:
+        Upload.objects.filter(user_id = user_id).filter(zipName = zipName).first().delete()
+    except:
+        print("It did not work")
     return "Deleted From Memory"
 
 
