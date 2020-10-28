@@ -1,4 +1,4 @@
-import os, zipfile
+import os, zipfile, boto3
 from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -31,6 +31,19 @@ def delete_data(self, user_id, zipName, img_list):
             #CurrentUser.total_data_usage -= os.path.getsize(img_name)
             #CurrentUser.save()
             os.remove(img_name)
+    else:
+        user_id_full_string = f'user_{str(user_id)}'
+        client = boto3.client('s3', 'us-west-1',
+                     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        last = ""
+        while len(img_list) > 0:
+            img_name = os.path.basename(img_list.pop())
+            some_path = os.path.join('media', *[user_id_full_string, zipName, img_name])
+            client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=some_path)
+            last = some_path
+        return last
+
     return "Deleted From Memory"
 
 
@@ -139,7 +152,7 @@ def label(request):
                         delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
                 os.remove(zip_file_path)
                 if settings.USE_S3 == True:
-                    transfer = S3Transfer(boto3.client('s3', 'us-west-2',
+                    transfer = S3Transfer(boto3.client('s3', 'us-west-1',
                                                        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                                                        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY))
                 #client = boto3.client('s3')
@@ -147,7 +160,7 @@ def label(request):
                     for root, dirs, files in os.walk(image_path):
                         for name in files:
                             local_path = os.path.join(root, name)
-                            s3_path = os.path.join('media', *[user_id_full_string, name])
+                            s3_path = os.path.join('media', *[user_id_full_string, zipObject.zipName, name])
                             transfer.upload_file(local_path, bucket, s3_path)
                     for root, dirs, files in os.walk(image_path):
                         for name in files:

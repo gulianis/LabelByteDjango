@@ -60,15 +60,16 @@ def download_count(request):
     # returns image down count for requested Image Name and Zip File name from requested user
     requested_image = UserImageUpload.objects.filter(imageName=request.data['ImageName']).filter(zipUpload__zipName=request.data['ZipFile']).filter(
         zipUpload__user=request.user).first()
-    print("LETS SEE:")
-    print(requested_image.count)
-    return Response({"result":str(requested_image.count)})
+    if requested_image == None:
+        return Response({"result":0})
+    else:
+        return Response({"result": str(requested_image.count)})
 
 @api_view(['POST'])
 def download(request):
     user_id_full_string = f'user_{str(request.user.id)}'
     if settings.USE_S3 == True:
-        transfer = S3Transfer(boto3.client('s3', 'us-west-2',
+        transfer = S3Transfer(boto3.client('s3', 'us-west-1',
                                            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                                            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY))
         bucket = settings.AWS_STORAGE_BUCKET_NAME
@@ -81,7 +82,7 @@ def download(request):
         else:
             os.mkdir(temp_directory)
         temp_store = os.path.join('media', *[user_id_full_string, 'transfer', request.data['ImageName']])
-        s3_path = os.path.join('media', *[user_id_full_string, request.data['ImageName']])
+        s3_path = os.path.join('media', *[user_id_full_string, request.data['ZipFile'], request.data['ImageName']])
         transfer.download_file(bucket, s3_path, temp_store)
     else:
         temp_store = os.path.join(settings.MEDIA_ROOT, *[user_id_full_string, 'image', request.data['ImageName']])
