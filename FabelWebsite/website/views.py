@@ -239,11 +239,11 @@ def download_label_txt(request):
     #print(Upload.objects.get(user=request.user).download_date)
     f = open(file_path, "w")
     for label in SquareLabel.objects.filter(image__zipUpload__user=request.user):
-        written_label = f"File-Name:{label.image.imageName},Label:BoundingBox,X:{label.x},Y:{label.y},Width:{label.w},Height:{label.h},Classification:{label.classification}\n"
+        written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:BoundingBox,X:{label.x},Y:{label.y},Width:{label.w},Height:{label.h},Classification:{label.classification}\n"
         f.write(written_label)
         print(label.image.imageName)
     for label in PointLabel.objects.filter(image__zipUpload__user=request.user):
-        written_label = f"File-Name:{label.image.imageName},Label:Point,X:{label.x},Y:{label.y}\n"
+        written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:Point,X:{label.x},Y:{label.y}\n"
         f.write(written_label)
     f.close()
     with open(file_path, 'rb') as fh:
