@@ -10,7 +10,7 @@ from .models import UserImageUpload, Upload, SquareLabel, PointLabel
 
 from users.models import CustomUser
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from celery.decorators import task
 
@@ -122,7 +122,14 @@ def label(request):
                 for path_type in [user_path, image_path, txt_path, txt_path]:
                     if not os.path.isdir(path_type):
                         os.mkdir(path_type)
-                print(zipObject.upload_date)
+                #print(zipObject.upload_date + timedelta(days=40))
+                #if zipObject.download_date == None:
+                #    zipObject.download_date = datetime.now()
+                #else:
+                #    zipObject.download_date = zipObject.download_date + timedelta(days=40)
+                #zipObject.save()
+                #print(zipObject.upload_date)
+                #print(zipObject.download_date)
                 zip_file_path = os.path.join(settings.MEDIA_ROOT, *[user_id_full_string,'zip',os.path.basename(zipObject.pic.name)])
                 # extract unzipped files
                 #img.pic.name follows format user_(id)/zip/(file_name)
@@ -130,10 +137,12 @@ def label(request):
                     total_img_memory = 0
                     added_img = []
                     fileNameDict = {}
+                    pic_exists = False  # Make sure one img file exists
                     for name in zf.namelist():
                         #Zip file contains extra garbage
                         # Look at specific files
                         if name.endswith(('png','jpeg','jpg')) and 'MACOSX' not in name:
+                            pic_exists = True
                             file_data = zf.read(name)
                             file_name = '_'.join(os.path.basename(name).split(' '))
                             suffix_start = file_name.rfind('.')
@@ -154,12 +163,16 @@ def label(request):
                                 break
                             imageData = UserImageUpload(imageName=file_name_revised, zipUpload=zipObject)
                             imageData.save()
+                    if pic_exists == False:
+                        delete_zip(added_img, zipObject, total_img_memory, CurrentUser)
+                        error = "NO IMAGE FILES IN ZIP FILE"
+                        total_img_memory = 0
                     if total_img_memory > 0:
                         CurrentUser.total_data_usage += total_img_memory
                         CurrentUser.save()
-                    if settings.DELETION == True:
-                        at_time = datetime.utcnow() + timedelta(seconds=120)
-                        delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
+                        if settings.DELETION == True:
+                            at_time = datetime.utcnow() + timedelta(seconds=120)
+                            delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
                 os.remove(zip_file_path)
                 if settings.USE_S3 == True:
                     transfer = S3Transfer(boto3.client('s3', 'us-west-1',
@@ -176,6 +189,8 @@ def label(request):
                         for name in files:
                             local_path = os.path.join(root, name)
                             os.remove(local_path)
+            else:
+                error = "INCORRECT FILE TYPE"
     zipObject = UploadForm
     try:
         images = [items.zipName + '.zip' for items in Upload.objects.filter(user=request.user)]
@@ -192,11 +207,36 @@ def howItWorks(request):
 @login_required
 def download_label_txt(request):
     # write labels to txt file
+
+    # deals with excessive download requests
+    if request.user.download_date == None:
+        request.user.download_date = datetime.now(timezone.utc)
+        request.user.save()
+    else:
+        difference = datetime.now(timezone.utc)-request.user.download_date
+        day_difference = difference.days
+        second_difference = difference.seconds
+        if request.user.download_count >= 5:
+            if day_difference == 0 and second_difference <= 1200:
+                raise Http404
+            else:
+                request.user.download_date = datetime.now(timezone.utc)
+                request.user.download_count = 1
+                request.user.save()
+        elif day_difference == 0 and second_difference < 60:
+            request.user.download_count += 1
+            request.user.save()
+        else:
+            request.user.download_date = datetime.now(timezone.utc)
+            request.user.save()
     user_id_full_string = f'user_{str(request.user.id)}'
     file_path = os.path.join(settings.MEDIA_ROOT, *[user_id_full_string,'txt','data.txt'])
     if os.path.exists(file_path):
         os.remove(file_path)
+    if not os.path.exists(settings.MEDIA_ROOT):
+        raise Http404
     # any previous text file will be deleted and rewritten with new data
+    #print(Upload.objects.get(user=request.user).download_date)
     f = open(file_path, "w")
     for label in SquareLabel.objects.filter(image__zipUpload__user=request.user):
         written_label = f"File-Name:{label.image.imageName},Label:BoundingBox,X:{label.x},Y:{label.y},Width:{label.w},Height:{label.h},Classification:{label.classification}\n"

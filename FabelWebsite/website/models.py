@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 User = settings.AUTH_USER_MODEL
@@ -8,7 +9,6 @@ def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/zip/<filename>
     user_id_full_string = f'user_{str(instance.user.id)}'
     return f'{user_id_full_string}/zip/{filename}'
-
 
 class Upload(models.Model):
     pic = models.FileField(upload_to=user_directory_path)
