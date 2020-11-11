@@ -21,6 +21,8 @@ def save_labels(request):
     #           'Point_0_data': '(20, 25, 5)', 'Point_0_color': 'black'}
     image = UserImageUpload.objects.all().filter(zipUpload__user=request.user).filter(
         zipUpload__zipName=request.data['ZipFile']).filter(imageName=request.data['ImageName']).first()
+    if len(image) == 0:
+        return Response({"result": "failure"})
     labeledItems = SquareLabel.objects.all().filter(image__zipUpload__user=request.user).filter(
         image__zipUpload__zipName=request.data['ZipFile']).filter(image__imageName=request.data['ImageName'])
     # first time image is saved it will be recorded as saved
@@ -91,8 +93,9 @@ def download(request):
     requested_image_data = UserImageUpload.objects.filter(imageName=request.data['ImageName']).filter(
         zipUpload__zipName=request.data['ZipFile']).filter(
         zipUpload__user=request.user).first()
-    requested_image_data.count += 1
-    requested_image_data.save()
+    if len(requested_image_data) > 0:
+        requested_image_data.count += 1
+        requested_image_data.save()
     # increments number of times image downloaded
     if os.path.exists(temp_store):
         with open(temp_store, 'rb') as fh:
@@ -161,13 +164,3 @@ def imageName(request):
     # example result:
     # result - {'image_1': 'true', 'image_2': 'false', 'image_3': 'true'}
     return Response(result)
-
-
-@api_view(['POST'])
-@permission_classes((IsAdminUser, ))
-def reset(request):
-    if request.method == 'POST':
-        for items in UserImageUpload.objects.all():
-            items.stage = '0'
-            items.save()
-        return Response({"result": "success"})
