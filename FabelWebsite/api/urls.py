@@ -11,6 +11,5 @@ urlpatterns = [
     path('zipFileName/', views.zipFileName, name="zipFileName"),
     path('imageName/', views.imageName, name="imageName"),
     path('getLabel/', views.getLabel, name="getLabel"),
-    path('reset/', views.reset, name='reset'),
     path('token-auth/', viewsToken.obtain_auth_token),
 ]
