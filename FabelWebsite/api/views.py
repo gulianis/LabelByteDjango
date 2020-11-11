@@ -93,7 +93,7 @@ def download(request):
     requested_image_data = UserImageUpload.objects.filter(imageName=request.data['ImageName']).filter(
         zipUpload__zipName=request.data['ZipFile']).filter(
         zipUpload__user=request.user).first()
-    if len(requested_image_data) != None:
+    if requested_image_data != None:
         requested_image_data.count += 1
         requested_image_data.save()
     # increments number of times image downloaded
