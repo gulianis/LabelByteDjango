@@ -62,7 +62,10 @@ def download_count(request):
     # returns image down count for requested Image Name and Zip File name from requested user
     requested_image = UserImageUpload.objects.filter(imageName=request.data['ImageName']).filter(zipUpload__zipName=request.data['ZipFile']).filter(
         zipUpload__user=request.user).first()
+    print("DOWNLOAD_COUNT")
+    print(requested_image)
     if requested_image == None:
+        print("IT IS NONE")
         return Response({"result": 10})
     else:
         return Response({"result": str(requested_image.count)})
