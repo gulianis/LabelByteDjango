@@ -21,7 +21,7 @@ def save_labels(request):
     #           'Point_0_data': '(20, 25, 5)', 'Point_0_color': 'black'}
     image = UserImageUpload.objects.all().filter(zipUpload__user=request.user).filter(
         zipUpload__zipName=request.data['ZipFile']).filter(imageName=request.data['ImageName']).first()
-    if len(image) == 0:
+    if image == None:
         return Response({"result": "failure"})
     labeledItems = SquareLabel.objects.all().filter(image__zipUpload__user=request.user).filter(
         image__zipUpload__zipName=request.data['ZipFile']).filter(image__imageName=request.data['ImageName'])
