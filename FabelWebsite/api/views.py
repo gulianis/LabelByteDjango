@@ -64,9 +64,9 @@ def download_count(request):
         zipUpload__user=request.user).first()
     print(requested_image.count)
     if requested_image == None:
-        return Response({"result": 10})
+        return Response({"result": str(10)})
     else:
-        return Response({"result": requested_image.count})
+        return Response({"result": str(requested_image.count)})
 
 @api_view(['POST'])
 def download(request):
