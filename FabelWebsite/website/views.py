@@ -199,10 +199,37 @@ def label(request):
     return render(request, 'website/label.html', {'form': zipObject,'images': images, 'error': error})
 
 def home(request):
-    return render(request, 'website/home.html')
+    text_desktop = " Fabel allows you to label image data on your phone. It will soon be available for iphone. Once \n" \
+                   " you create an account, you can upload data to the cloud. Download the app and login on your phone \n" \
+                   " with the same account You can access these photos and label them with bounding boxes or points. \n" \
+                   " The coordinate data of these labels in addition to a classification label for bounding boxes is \n" \
+                   " downloadable as a txt file. \n"
+    text_mobile = " Fabel allows you to label image data on your phone. \n " \
+                  " It will soon be available for iphone. Once you create \n" \
+                  " an account, you can upload data to the cloud. \n" \
+                  " Download the app and login on your phone with the \n" \
+                  " same account. You can access these photos and label \n" \
+                  " them with bounding boxes or points. The coordinate \n" \
+                  " data of these labels in addition to a classification \n" \
+                  " label for bounding boxes is downloadable as a txt file. \n"
+    is_mobile = False
+    text = text_desktop
+    if 'Mobile' in request.META['HTTP_USER_AGENT']:
+        is_mobile = True
+        text = text_mobile
+    return render(request, 'website/home.html', {'text': text, 'is_mobile': is_mobile})
 
 def howItWorks(request):
-    return render(request, 'website/howItWorks.html')
+    is_mobile = False
+    if 'Mobile' in request.META['HTTP_USER_AGENT']:
+        is_mobile = True
+    return render(request, 'website/howItWorks.html', {'is_mobile': is_mobile})
+
+def privacyPolicy(request):
+    return render(request, 'website/privacy-policy.html')
+
+def termsOfService(request):
+    return render(request, 'website/terms-of-service.html')
 
 @login_required
 def download_label_txt(request):

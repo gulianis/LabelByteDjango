@@ -142,7 +142,7 @@ def zipFileName(request):
         img = zip.userimageupload_set.all()
         unSavedCount = len(img.filter(saved=False))
         result[f"Data_{i}_name"] = str(zip.zipName)
-        result["Date"] = str(zip.upload_date)
+        result[f"Data_{i}_date"] = str(zip.upload_date)
         # if all image labels have been saved - Data_{i}_saved will be set to true otherwise false
         if unSavedCount == 0:
             result[f"Data_{i}_saved"] = "true"

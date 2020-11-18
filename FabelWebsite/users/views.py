@@ -27,6 +27,7 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form, 'limit': limit})
 
+
 @login_required
 def profile(request):
     if request.POST:
