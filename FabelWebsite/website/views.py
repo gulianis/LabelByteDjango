@@ -219,11 +219,11 @@ def home(request):
         text = text_mobile
     return render(request, 'website/home.html', {'text': text, 'is_mobile': is_mobile})
 
-def howItWorks(request):
+def contact(request):
     is_mobile = False
     if 'Mobile' in request.META['HTTP_USER_AGENT']:
         is_mobile = True
-    return render(request, 'website/howItWorks.html', {'is_mobile': is_mobile})
+    return render(request, 'website/contact.html', {'is_mobile': is_mobile})
 
 def privacyPolicy(request):
     return render(request, 'website/privacy-policy.html')
