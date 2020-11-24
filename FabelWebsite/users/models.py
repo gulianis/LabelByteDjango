@@ -16,9 +16,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
     total_data_usage = models.BigIntegerField(default=0)
-    emailPasswordCount = models.IntegerField(default=0)
     download_date = models.DateTimeField(null=True, blank=True)
     download_count = models.IntegerField(default=0)
+    new_password_date = models.DateTimeField(null=True, blank=True)
+    new_password_count = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

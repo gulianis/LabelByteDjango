@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.contrib.auth.hashers import check_password
+from django.contrib import messages
 from django.conf import settings
 
 from .forms import CustomUserCreationForm, ChangePasswordForm
 
 from users.models import CustomUser
+
+from datetime import datetime, timedelta, timezone
 
 from .dataUsage import totalUserCount
 
@@ -22,7 +24,7 @@ def register(request):
             form = CustomUserCreationForm(request.POST)
             if form.is_valid():
                 form.save()
-                messages.success(request, f'Your account has been created! You are now able to log in')
+                messages.success(request, 'Account created, please login.')
                 return redirect('login')
 
     else:
@@ -35,16 +37,56 @@ def profile(request):
         return redirect('change-password')
     return render(request, 'users/profile.html')
 
+# deals with excessive download requests
+    if request.user.download_date == None:
+        request.user.download_date = datetime.now(timezone.utc)
+        request.user.save()
+    else:
+        difference = datetime.now(timezone.utc)-request.user.download_date
+        day_difference = difference.days
+        second_difference = difference.seconds
+        if request.user.download_count >= 5:
+            if day_difference == 0 and second_difference <= 1200:
+                raise Http404
+            else:
+                request.user.download_date = datetime.now(timezone.utc)
+                request.user.download_count = 1
+                request.user.save()
+        elif day_difference == 0 and second_difference < 60:
+            request.user.download_count += 1
+            request.user.save()
+        else:
+            request.user.download_date = datetime.now(timezone.utc)
+            request.user.save()
+
 def forgotPassword(request):
     result = ''
     if request.method == "POST":
         check = CustomUser.objects.filter(email=request.POST['email'])
         if len(check) > 0:
             user_entered = check.first()
-            if user_entered.emailPasswordCount == 3:
-                result = 'Reached daily password reset limit'
-                return render(request, 'users/sendPasswordReset.html', {'result': result})
-            user_entered.emailPasswordCount += 1
+            if user_entered.new_password_date == None:
+                user_entered.new_password_date = datetime.now(timezone.utc)
+                user_entered.save()
+            else:
+                difference = datetime.now(timezone.utc) - user_entered.new_password_date
+                day_difference = difference.days
+                second_difference = difference.seconds
+                if user_entered.new_password_count >= 3:
+                    if day_difference == 0:
+                        result = 'Reached daily password reset limit'
+                        return render(request, 'users/sendPasswordReset.html', {'result': result})
+                    else:
+                        user_entered.new_password_date = datetime.now(timezone.utc)
+                        user_entered.new_password_count = 1
+                        user_entered.save()
+                elif day_difference == 0:
+                    user_entered.new_password_count += 1
+                    user_entered.save()
+                else:
+                    user_entered.new_password_count = 1
+                    user_entered.download_date = datetime.now(timezone.utc)
+                    user_entered.save()
             password = CustomUser.objects.make_random_password()
             user_entered.set_password(password)
             user_entered.save()

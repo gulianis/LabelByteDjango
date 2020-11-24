@@ -1,6 +1,15 @@
 {% extends "website/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+    {% if messages %}
+    <div class="b">
+        {% for message in messages %}
+            <p>
+                {{ message }}
+            </p>
+        {% endfor %}
+    </div>
+    {% endif %}
     <h1>Login Here:</h1>
     <div class="content-section">
         <form method="POST">
