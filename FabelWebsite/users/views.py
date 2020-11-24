@@ -17,7 +17,7 @@ def register(request):
     limit = ''
     if request.method == "POST":
         # Mechanism to deal with excessive account creation
-        if totalUserCount() > settings.TOTAL_USER_LIMIT:
+        if totalUserCount() >= settings.TOTAL_USER_LIMIT:
             limit = 'Registration temporarily unavailable. Check back soon.'
             form = CustomUserCreationForm()
         else:
