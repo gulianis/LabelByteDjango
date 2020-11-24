@@ -16,15 +16,16 @@ def register(request):
     # Mechanism to deal with excessive account creation
     if totalUserCount() > settings.TOTAL_USER_LIMIT:
         limit = 'Registration temporarily unavailable. Check back soon.'
-    if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f'Your account has been created! You are now able to log in')
-            return redirect('login')
-
     else:
-        form = CustomUserCreationForm()
+        if request.method == "POST":
+            form = CustomUserCreationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Your account has been created! You are now able to log in')
+                return redirect('login')
+
+        else:
+            form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form, 'limit': limit})
 
 
