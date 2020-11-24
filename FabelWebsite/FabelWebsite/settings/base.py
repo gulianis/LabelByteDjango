@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+
 from dotenv import load_dotenv
 load_dotenv()
 
