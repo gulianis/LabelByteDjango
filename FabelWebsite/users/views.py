@@ -37,27 +37,6 @@ def profile(request):
         return redirect('change-password')
     return render(request, 'users/profile.html')
 
-# deals with excessive download requests
-    if request.user.download_date == None:
-        request.user.download_date = datetime.now(timezone.utc)
-        request.user.save()
-    else:
-        difference = datetime.now(timezone.utc)-request.user.download_date
-        day_difference = difference.days
-        second_difference = difference.seconds
-        if request.user.download_count >= 5:
-            if day_difference == 0 and second_difference <= 1200:
-                raise Http404
-            else:
-                request.user.download_date = datetime.now(timezone.utc)
-                request.user.download_count = 1
-                request.user.save()
-        elif day_difference == 0 and second_difference < 60:
-            request.user.download_count += 1
-            request.user.save()
-        else:
-            request.user.download_date = datetime.now(timezone.utc)
-            request.user.save()
 
 def forgotPassword(request):
     result = ''
