@@ -64,7 +64,7 @@ def forgotPassword(request):
                     user_entered.save()
                 else:
                     user_entered.new_password_count = 1
-                    user_entered.download_date = datetime.now(timezone.utc)
+                    user_entered.new_password_date = datetime.now(timezone.utc)
                     user_entered.save()
             password = CustomUser.objects.make_random_password()
             user_entered.set_password(password)
