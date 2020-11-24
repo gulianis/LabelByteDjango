@@ -51,7 +51,7 @@ def forgotPassword(request):
                 difference = datetime.now(timezone.utc) - user_entered.new_password_date
                 day_difference = difference.days
                 second_difference = difference.seconds
-                if user_entered.new_password_count >= 3:
+                if user_entered.new_password_count >= 2:
                     if day_difference == 0:
                         result = 'Reached daily password reset limit'
                         return render(request, 'users/sendPasswordReset.html', {'result': result})
