@@ -13,21 +13,21 @@ from .dataUsage import totalUserCount
 
 def register(request):
     limit = ''
-    # Mechanism to deal with excessive account creation
-    if totalUserCount() > settings.TOTAL_USER_LIMIT:
-        limit = 'Registration temporarily unavailable. Check back soon.'
-    else:
-        if request.method == "POST":
+    if request.method == "POST":
+        # Mechanism to deal with excessive account creation
+        if totalUserCount() > settings.TOTAL_USER_LIMIT:
+            limit = 'Registration temporarily unavailable. Check back soon.'
+            form = CustomUserCreationForm()
+        else:
             form = CustomUserCreationForm(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, f'Your account has been created! You are now able to log in')
                 return redirect('login')
 
-        else:
-            form = CustomUserCreationForm()
+    else:
+        form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form, 'limit': limit})
-
 
 @login_required
 def profile(request):
