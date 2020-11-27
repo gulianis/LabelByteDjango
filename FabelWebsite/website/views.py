@@ -269,9 +269,14 @@ def download_label_txt(request):
         written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:BoundingBox,X:{label.x},Y:{label.y},Width:{label.w},Height:{label.h},Classification:{label.classification}\n"
         f.write(written_label)
         print(label.image.imageName)
+    print(PointLabel.objects.filter(image__zipUpload__user=request.user))
     for label in PointLabel.objects.filter(image__zipUpload__user=request.user):
         written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:Point,X:{label.x},Y:{label.y}\n"
         f.write(written_label)
+        print(label.x)
+        print(label.y)
+        print(label.dimension)
+        print(label.color)
     f.close()
     with open(file_path, 'rb') as fh:
         response = HttpResponse(fh.read(), content_type="application/force-download")

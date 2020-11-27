@@ -23,7 +23,9 @@ def save_labels(request):
         zipUpload__zipName=request.data['ZipFile']).filter(imageName=request.data['ImageName']).first()
     if image == None:
         return Response({"result": "failure"})
-    labeledItems = SquareLabel.objects.all().filter(image__zipUpload__user=request.user).filter(
+    labeledItemsSquare = SquareLabel.objects.all().filter(image__zipUpload__user=request.user).filter(
+        image__zipUpload__zipName=request.data['ZipFile']).filter(image__imageName=request.data['ImageName'])
+    labeledItemsPoint =  PointLabel.objects.all().filter(image__zipUpload__user=request.user).filter(
         image__zipUpload__zipName=request.data['ZipFile']).filter(image__imageName=request.data['ImageName'])
     # first time image is saved it will be recorded as saved
     if image.saved == False:
@@ -31,7 +33,11 @@ def save_labels(request):
         image.save()
     # delete all former labels
     try:
-        labeledItems.delete()
+        labeledItemsSquare.delete()
+    except:
+        print("Did not work")
+    try:
+        labeledItemsPoint.delete()
     except:
         print("Did not work")
     # extracts and saves data for labels in models
