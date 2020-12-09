@@ -199,14 +199,14 @@ def label(request):
     return render(request, 'website/label.html', {'form': zipObject,'images': images, 'error': error})
 
 def home(request):
-    text_desktop = " Fabel allows you to label image data on your phone. It will soon be available for iphone. Once \n" \
+    text_desktop = " LabelByte allows you to label image data on your phone. It will soon be available for iphone. Once \n" \
                    " you create an account, you can upload data to the cloud. Download the app and login on your phone \n" \
                    " with the same account You can access these photos and label them with bounding boxes or points. \n" \
                    " The coordinate data of these labels in addition to a classification label for bounding boxes is \n" \
                    " downloadable as a txt file. \n"
-    text_mobile = " Fabel allows you to label image data on your phone. \n " \
-                  " It will soon be available for iphone. Once you create \n" \
-                  " an account, you can upload data to the cloud. \n" \
+    text_mobile = " LabelByte allows you to label image data on your \n " \
+                  " phone. It will soon be available for iphone. Once you \n" \
+                  " create an account, you can upload data to the cloud. \n" \
                   " Download the app and login on your phone with the \n" \
                   " same account. You can access these photos and label \n" \
                   " them with bounding boxes or points. The coordinate \n" \
