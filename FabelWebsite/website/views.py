@@ -171,8 +171,11 @@ def label(request):
                         CurrentUser.total_data_usage += total_img_memory
                         CurrentUser.save()
                         if settings.DELETION == True:
-                            at_time = datetime.utcnow() + timedelta(days=1)
-                            delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
+                            if request.user.id == 1:
+                                return
+                            else:
+                                at_time = datetime.utcnow() + timedelta(days=1)
+                                delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
                 os.remove(zip_file_path)
                 if settings.USE_S3 == True:
                     transfer = S3Transfer(boto3.client('s3', 'us-west-1',
