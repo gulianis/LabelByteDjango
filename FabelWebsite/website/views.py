@@ -172,7 +172,7 @@ def label(request):
                         CurrentUser.save()
                         if settings.DELETION == True:
                             if request.user.id == 1:
-                                return
+                                pass
                             else:
                                 at_time = datetime.utcnow() + timedelta(days=1)
                                 delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
