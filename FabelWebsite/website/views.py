@@ -231,6 +231,10 @@ def contact(request):
 def privacyPolicy(request):
     return render(request, 'website/privacy-policy.html')
 
+def privacyPolicyApp(request):
+    return render(request, 'website/privacy-policy-app.html')
+
+
 def termsOfService(request):
     return render(request, 'website/terms-of-service.html')
 
