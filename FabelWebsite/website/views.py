@@ -239,7 +239,10 @@ def termsOfService(request):
     return render(request, 'website/terms-of-service.html')
 
 def instructions(request):
-    return render(request, 'website/instructions.html')
+    is_mobile = False
+    if 'Mobile' in request.META['HTTP_USER_AGENT']:
+        is_mobile = True
+    return render(request, 'website/instructions.html', {'is_mobile': is_mobile})
 
 @login_required
 def download_label_txt(request):
