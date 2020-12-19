@@ -238,6 +238,9 @@ def privacyPolicyApp(request):
 def termsOfService(request):
     return render(request, 'website/terms-of-service.html')
 
+def instructions(request):
+    return render(request, 'website/instructions.html')
+
 @login_required
 def download_label_txt(request):
     # write labels to txt file
