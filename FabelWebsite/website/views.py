@@ -202,13 +202,13 @@ def label(request):
     return render(request, 'website/label.html', {'form': zipObject,'images': images, 'error': error})
 
 def home(request):
-    text_desktop = " LabelByte allows you to label image data on your phone. It will soon be available for iphone. Once \n" \
+    text_desktop = " LabelByte allows you to label image data on a mobile device. Available for iPhone and iPad. Once \n" \
                    " you create an account, you can upload data to the cloud. Download the app and login on your phone \n" \
-                   " with the same account You can access these photos and label them with bounding boxes or points. \n" \
+                   " with the same account. You can access these photos and label them with bounding boxes or points. \n" \
                    " The coordinate data of these labels in addition to a classification label for bounding boxes is \n" \
                    " downloadable as a txt file. \n"
-    text_mobile = " LabelByte allows you to label image data on your \n " \
-                  " phone. It will soon be available for iphone. Once you \n" \
+    text_mobile = " LabelByte allows you to label image data on a mobile \n " \
+                  " device. Available for iPhone and iPad. Once you \n" \
                   " create an account, you can upload data to the cloud. \n" \
                   " Download the app and login on your phone with the \n" \
                   " same account. You can access these photos and label \n" \
