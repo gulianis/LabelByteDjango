@@ -174,7 +174,7 @@ def label(request):
                             if request.user.id == 1:
                                 pass
                             else:
-                                at_time = datetime.utcnow() + timedelta(days=1)
+                                at_time = datetime.utcnow() + timedelta(days=3)
                                 delete_data.apply_async(args=(request.user.id, zipObject.zipName, added_img), eta=at_time)
                 os.remove(zip_file_path)
                 if settings.USE_S3 == True:
