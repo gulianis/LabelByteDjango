@@ -10,5 +10,6 @@ urlpatterns = [
     path('privacy-policy/', views.privacyPolicy, name='privacy-policy'),
     path('terms-of-service/', views.termsOfService, name='terms-of-service'),
     path('privacy-policy-app/', views.privacyPolicyApp, name='privacy-policy-app'),
-    path('instructions/', views.instructions, name='instructions')
+    path('instructions/', views.instructions, name='instructions'),
+    path('faq/', views.faq, name='faq'),
 ]

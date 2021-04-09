@@ -1,0 +1,53 @@
+{% extends "website/base.html" %}
+{% block content %}
+    <h1>FAQ:</h1>
+    <div style="margin: auto;width:{{ width }};height:{{ height }};border:1px solid #000;">
+        <ol>
+            <li>What type of data can be labeled?<br>Currently only images.</li><br>
+            <li>What type of labels can be used?<br>Bounding Boxes and Points.</li><br>
+            <li>Where can I create an account?<br>Either click register on the navigation bar or tap create account on the app</li><br>
+            <li>Where can I upload data?<br>Website: Once logged in click Label on the navigation bar.<br>
+                App: Once logged in press Upload Button in the top right corner.
+                Places images you would like to upload in a folder and compress them into a zip file. Upload the zip file.</li><br>
+            <li>How can I download label data?<br>
+                Website: Select Label on the navigation bar. Scroll down and select download button<br>
+                App: Once logged in press Options Button in the top left corner. Select download label data from pop up menu.</li><br>
+            <li>Why is uploaded data deleted after 7 days?<br>See question below.</li><br>
+            <li>Why are there limits to data upload and accessibility?<br>
+                LabelByte is currently in beta. If LabelByte generates interest more functionality and accessibility will be added.<br><br>
+                Here is the data limits and accessiblity information:
+                {% if is_mobile == False %}
+                    <table>
+                        <tr>
+                            <th>monthly upload limit</th>
+                            <th>file upload limit</th>
+                            <th>requests per uploaded image</th>
+                            <th>access time for uploaded file</th>
+                        </tr>
+                        <tr>
+                            <td>75 mb</td>
+                            <td>20 mb</td>
+                            <td>10</td>
+                            <td>7 days</td>
+                        </tr>
+                    </table>
+                {% else %}
+                    <table>
+                        <tr>
+                            <th><font size="-2">monthly upload limit</font></th>
+                            <th><font size="-2">file upload limit</font></th>
+                            <th><font size="-2">requests per uploaded image</font></th>
+                            <th><font size="-2">access time for uploaded file</font></th>
+                        </tr>
+                        <tr>
+                            <td><font size="-2">75 mb</font></td>
+                            <td><font size="-2">20 mb</font></td>
+                            <td><font size="-2">10</font></td>
+                            <td><font size="-2">7 days</font></td>
+                        </tr>
+                    </table>
+                {% endif %}
+            </li>
+        </ol>
+    </div><br><br><br><br>
+{% endblock content %}

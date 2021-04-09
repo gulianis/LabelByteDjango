@@ -90,3 +90,13 @@ h4 {
 .jumbotron {
     background-color: #90EE90;
 }
+
+.square {
+  height: 50px;
+  width: 50px;
+  background-color: #555;
+}
+
+.boxed {
+    border: 1px solid green;
+}

@@ -12,4 +12,7 @@ urlpatterns = [
     path('imageName/', views.imageName, name="imageName"),
     path('getLabel/', views.getLabel, name="getLabel"),
     path('token-auth/', viewsToken.obtain_auth_token),
+    path('registerThroughAPI/', views.registerThroughAPI, name="registerThroughAPI"),
+    path('downloadLabelThroughAPI/', views.downloadLabelThroughAPI, name="downloadLabelThroughAPI"),
+    path('uploadZip/', views.uploadZip),
 ]

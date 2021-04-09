@@ -3,14 +3,32 @@ import os
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import  IsAdminUser
 
 from website.models import UserImageUpload, Upload, SquareLabel, PointLabel
+from .models import UploadModel
 
 import boto3
 from boto3.s3.transfer import S3Transfer
 
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
+
+from rest_framework.decorators import authentication_classes, permission_classes
+
+from users.forms import CustomUserCreationForm
+
+from rest_framework.parsers import FileUploadParser, MultiPartParser
+
+from django.utils.datastructures import MultiValueDict
+
+from website.forms import UploadForm
+
+from website.views import label_helper
 
 @api_view(['POST'])
 def save_labels(request):
@@ -173,3 +191,93 @@ def imageName(request):
     # example result:
     # result - {'image_1': 'true', 'image_2': 'false', 'image_3': 'true'}
     return Response(result)
+
+#@api_view(['POST'])
+#@authentication_classes([])
+#@permission_classes([])
+#def uploadZip(request):
+#    print("okay")
+#    print(request.data)
+#    print(request.FILES)
+#    return Response({'result':'success'})
+
+#class uploadZip(APIView):
+#    parser_classes = (FileUploadParser,)
+
+#def put(self, request, filename, format=None):
+#        file_obj = request.FILES['file']
+#        # do some stuff with uploaded file
+#        return Response(status=204)
+
+@api_view(['POST'])
+@parser_classes([FileUploadParser])
+#@authentication_classes([])
+#@permission_classes([])
+def uploadZip(request, format=None):
+    #print(request.data['file'])
+    #zipObject = UploadForm(request.POST, request.FILES)
+    #zipObject.save()
+    request.FILES['pic'] = request.FILES.pop('file')
+    user_id = str(request.user.id)
+    user_id_full_string = f'user_{str(request.user.id)}'
+    error, zipObject = label_helper(request.user, user_id, user_id_full_string, request.FILES, request.POST)
+    #zipObject = UploadForm(request.POST, request.FILES)
+    #if zipObject.is_valid():
+    #    print(request.POST)
+    #    print(request.FILES)
+    #    print(request.FILES['pic'].name)
+    #    print(request.user.id)
+    #    zipObject = zipObject.save(commit=False)
+    #    zipObject.user = request.user
+    #    zipObject.zipName = '_'.join(os.path.basename(zipObject.pic.name)[:-4].split(' '))
+    #    zipObject.save()
+    request.FILES['pic'].close()
+    return Response({'result':error})
+
+"""
+class doSomeStuff(APIView):
+    #permission_classes = (IsAuthenticated,)             # <-- And here
+
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        return Response(content)
+
+class doSomeOtherStuff(APIView):
+
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        return Response(content)
+"""
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def registerThroughAPI(request):
+    content1 = {'message': 'Created'}
+    content2 = {'message': 'Not Created'}
+    #User.objects.create_user(username=username, email=email, password=password)
+    form = CustomUserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return Response(content1)
+    else:
+        error = form.errors.get_json_data()
+        for items in error:
+            error_message = error[items][0]['message']
+            content2['error_type'] = items
+            content2['error_message'] = error_message
+            #print(items)
+            #print(error_message)
+            break
+        return Response(content2)
+
+@api_view(['POST'])
+def downloadLabelThroughAPI(request):
+    content = {'result': ''}
+    for label in SquareLabel.objects.filter(image__zipUpload__user=request.user):
+        written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:BoundingBox,X:{label.x},Y:{label.y},Width:{label.w},Height:{label.h},Classification:{label.classification}\n"
+        content['result'] += written_label
+    for label in PointLabel.objects.filter(image__zipUpload__user=request.user):
+        written_label = f"ZipFile-Name:{label.image.zipUpload.zipName},File-Name:{label.image.imageName},Label:Point,X:{label.x},Y:{label.y}\n"
+        content['result'] += written_label
+    return Response(content)
