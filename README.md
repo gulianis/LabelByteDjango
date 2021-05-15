@@ -1,2 +1,2 @@
-# FabelDjangoWebsite
-Django Final Copy
+# LabelByteDjango
+Fabel was the previous name before LabelByte
